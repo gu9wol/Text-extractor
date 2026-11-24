@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PADDOCK CLIPPER · 모토원 발췌기</title>
+<meta name="description" content="본문을 넣으면 이미지 카드로 만들어 주는 모토원 테마 발췌기. 자동 페이지 넘김, 채팅 테마, 스티커, 프리셋.">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" crossorigin="anonymous" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Noto+Serif+KR:wght@400;700;900&family=Nanum+Myeongjo:wght@400;700;800&family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=IBM+Plex+Sans+KR:wght@400;700&family=Nanum+Gothic+Coding:wght@400;700&family=Black+Han+Sans&family=Do+Hyeon&family=Hahmlet:wght@400;700;900&family=Oswald:wght@500;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<style id="userFonts"></style>
+</head>
+<body>
+
+<header class="top">
+  <div class="livery" aria-hidden="true"></div>
+  <div class="top-in">
+    <div class="brand">
+      <span class="brand-kicker">MOTIVO 1 · CLIPPING TOOL</span>
+      <h1>PADDOCK CLIPPER</h1>
+      <p class="brand-sub">본문을 넣으면 카드 이미지로. 넘치면 다음 장으로 알아서 넘어갑니다.</p>
+    </div>
+    <nav class="mtabs" aria-label="화면 전환">
+      <button type="button" class="mtab on" data-view="edit">편집</button>
+      <button type="button" class="mtab" data-view="preview">미리보기 <b id="mPageCount">1</b></button>
+    </nav>
+  </div>
+</header>
+
+<main class="layout" id="layout" data-view="edit">
+  <!-- ============ SETTINGS ============ -->
+  <section class="panel" aria-label="설정">
+
+    <!-- SECTOR 01 -->
+    <details class="sector" open>
+      <summary><span class="sec-no">SECTOR 01</span><span class="sec-name">TEXT</span><span class="sec-ko">본문</span></summary>
+      <div class="sec-body">
+        <div class="seg" role="radiogroup" aria-label="모드">
+          <button type="button" class="seg-btn on" data-mode="normal">일반 모드</button>
+          <button type="button" class="seg-btn" data-mode="chat">채팅 모드</button>
+        </div>
+
+        <div class="toolbar" id="toolbar">
+          <button type="button" data-fmt="b" title="굵게 (Ctrl+B)"><b>B</b></button>
+          <button type="button" data-fmt="i" title="기울임 (Ctrl+I)"><i>I</i></button>
+          <button type="button" data-fmt="u" title="밑줄 (Ctrl+U)"><u>U</u></button>
+          <button type="button" data-fmt="s" title="취소선"><s>S</s></button>
+          <span class="tb-color" title="형광펜">
+            <button type="button" data-fmt="hl"><span class="hl-ico">형광</span></button>
+            <input type="color" id="hlColor" value="#fff176" aria-label="형광펜 색">
+          </span>
+          <span class="tb-color" title="글자색">
+            <button type="button" data-fmt="color"><span class="fc-ico">A</span></button>
+            <input type="color" id="fcColor" value="#e5375b" aria-label="글자색">
+          </span>
+          <button type="button" data-fmt="quote" title="인용">❝ 인용</button>
+          <button type="button" data-fmt="censor" title="검열 (검은 막대)">▇ 검열</button>
+          <button type="button" data-fmt="clear" title="선택 영역 서식 삭제">서식 삭제</button>
+          <span class="tb-sep"></span>
+          <button type="button" data-fmt="pagebreak" title="강제 다음 장 (===)">⤓ 다음 장</button>
+          <button type="button" data-fmt="date" class="chat-only" title="날짜 구분선">📅 날짜</button>
+          <button type="button" data-fmt="notice" class="chat-only" title="시스템 알림">🔔 알림</button>
+        </div>
+
+        <textarea id="text" spellcheck="false" aria-label="본문"></textarea>
+        <div class="text-meta"><span id="charCount">0자</span><span class="hint">서식은 글자를 선택하고 툴바를 누르세요.</span></div>
+
+        <details class="help">
+          <summary>문법 도움말</summary>
+          <div class="help-grid">
+            <div>
+              <h4>공통</h4>
+              <dl>
+                <dt><code>===</code></dt><dd>강제로 다음 장</dd>
+                <dt><code>[1]</code>~<code>[6]</code> 내용</dt><dd>프로필 말풍선</dd>
+                <dt><code>[-]</code> 내용</dt><dd>앞 줄 아래 작은 번역</dd>
+                <dt><code>[1] [사진1]</code></dt><dd>사진 말풍선</dd>
+                <dt><code>[사진1]</code></dt><dd>본문 사진</dd>
+                <dt><code>[s]</code> 내용</dt><dd>시스템 알림</dd>
+                <dt><code>[d]</code> 내용</dt><dd>날짜 구분선</dd>
+                <dt>줄 끝 <code>&lt;[오후 3:12]&gt;</code></dt><dd>그 메시지 시간</dd>
+              </dl>
+            </div>
+            <div>
+              <h4>일반 모드</h4>
+              <dl>
+                <dt><code># </code>/<code>## </code>/<code>### </code></dt><dd>제목 / 부제목 / 소제목</dd>
+                <dt><code>---</code></dt><dd>구분선</dd>
+                <dt><code>-- 글 --</code></dt><dd>가운데 글 구분선</dd>
+                <dt><code>&gt; </code> 내용</dt><dd>인용</dd>
+                <dt>빈 줄</dt><dd>문단 나눔</dd>
+              </dl>
+              <h4>채팅 모드</h4>
+              <dl>
+                <dt>앞 기호 없는 줄</dt><dd>바로 앞 사람의 다음 말풍선</dd>
+              </dl>
+            </div>
+            <div>
+              <h4>서식</h4>
+              <dl>
+                <dt><code>**굵게**</code></dt><dd><b>굵게</b></dd>
+                <dt><code>*기울임*</code></dt><dd><i>기울임</i></dd>
+                <dt><code>__밑줄__</code></dt><dd><u>밑줄</u></dd>
+                <dt><code>~~취소~~</code></dt><dd><s>취소</s></dd>
+                <dt><code>==형광==</code>, <code>=={#ffe14d}형광==</code></dt><dd>형광펜</dd>
+                <dt><code>{#e5375b}글자색{/}</code></dt><dd>글자색</dd>
+                <dt><code>||검열||</code></dt><dd>검은 막대</dd>
+              </dl>
+            </div>
+          </div>
+        </details>
+      </div>
+    </details>
+
+    <!-- SECTOR 02 -->
+    <details class="sector" open>
+      <summary><span class="sec-no">SECTOR 02</span><span class="sec-name">PHOTOS</span><span class="sec-ko">사진</span></summary>
+      <div class="sec-body">
+        <div class="row">
+          <label class="btn file">사진 올리기<input type="file" id="photoInput" accept="image/*" multiple hidden></label>
+          <label class="switch"><input type="checkbox" id="photoOn" checked><span></span>본문 이미지 삽입</label>
+        </div>
+        <p class="hint">사진을 누르면 커서 위치에 <code>[사진N]</code>이 들어갑니다. × 로 삭제.</p>
+        <div class="thumbs" id="photoList"></div>
+      </div>
+    </details>
+
+    <!-- SECTOR 03 -->
+    <details class="sector" open>
+      <summary><span class="sec-no">SECTOR 03</span><span class="sec-name">CHAT</span><span class="sec-ko">채팅 테마 · 프로필</span></summary>
+      <div class="sec-body">
+        <span class="lbl">CHAT THEME</span>
+        <div class="theme-grid" id="themeGrid"></div>
+        <span class="lbl">PROFILES</span>
+        <div class="profiles" id="profiles"></div>
+      </div>
+    </details>
+
+    <!-- SECTOR 04 -->
+    <details class="sector">
+      <summary><span class="sec-no">SECTOR 04</span><span class="sec-name">TITLE &amp; CREDIT</span><span class="sec-ko">타이틀 · 크레딧</span></summary>
+      <div class="sec-body">
+        <label class="fld"><span class="lbl">TITLE</span><input type="text" data-k="title" placeholder="첫 장 위에 들어갈 제목"></label>
+        <label class="fld"><span class="lbl">CREDIT</span><input type="text" data-k="credit" placeholder="모든 장 아래 · 양 끝 펼치기는 앞 | 뒤"></label>
+        <div class="fld"><span class="lbl">CREDIT ALIGN</span>
+          <div class="seg sm" data-seg="creditAlign">
+            <button type="button" data-v="left">왼쪽</button><button type="button" data-v="right">오른쪽</button><button type="button" data-v="spread">양 끝 펼치기</button>
+          </div>
+        </div>
+        <label class="fld range"><span class="lbl">CREDIT SIZE <output data-out="creditSize"></output></span><input type="range" min="8" max="22" step="1" data-k="creditSize"></label>
+        <label class="fld range"><span class="lbl">TITLE SIZE <output data-out="titleSize"></output></span><input type="range" min="16" max="56" step="1" data-k="titleSize"></label>
+      </div>
+    </details>
+
+    <!-- SECTOR 05 -->
+    <details class="sector">
+      <summary><span class="sec-no">SECTOR 05</span><span class="sec-name">TYPOGRAPHY</span><span class="sec-ko">서체 · 정렬</span></summary>
+      <div class="sec-body">
+        <div class="fld"><span class="lbl">FONT</span>
+          <div class="row">
+            <select data-k="font" id="fontSel"></select>
+            <label class="btn file sm">내 폰트<input type="file" id="fontInput" accept=".ttf,.otf,.woff,.woff2" hidden></label>
+          </div>
+        </div>
+        <div class="fld"><span class="lbl">VERTICAL ALIGN</span>
+          <div class="seg sm" data-seg="valign">
+            <button type="button" data-v="top">상단</button><button type="button" data-v="center">가운데</button><button type="button" data-v="bottom">하단</button>
+          </div>
+        </div>
+        <label class="switch"><input type="checkbox" data-k="justify"><span></span>텍스트 양쪽 정렬</label>
+        <label class="fld range"><span class="lbl">SIZE <output data-out="fontSize"></output></span><input type="range" min="10" max="36" step="0.5" data-k="fontSize"></label>
+        <label class="fld range"><span class="lbl">TRACKING <output data-out="tracking"></output></span><input type="range" min="-0.1" max="0.3" step="0.005" data-k="tracking"></label>
+        <label class="fld range"><span class="lbl">WIDTH <output data-out="widthScale"></output></span><input type="range" min="70" max="130" step="1" data-k="widthScale"></label>
+        <label class="fld range"><span class="lbl">LEADING <output data-out="leading"></output></span><input type="range" min="1" max="2.6" step="0.05" data-k="leading"></label>
+      </div>
+    </details>
+
+    <!-- SECTOR 06 -->
+    <details class="sector" open>
+      <summary><span class="sec-no">SECTOR 06</span><span class="sec-name">CARD</span><span class="sec-ko">카드 디자인</span></summary>
+      <div class="sec-body">
+        <div class="fld"><span class="lbl">RATIO</span>
+          <div class="seg sm wrap" data-seg="ratio">
+            <button type="button" data-v="1:1">1:1</button>
+            <button type="button" data-v="4:5">4:5</button>
+            <button type="button" data-v="3:4">포토카드 3:4</button>
+            <button type="button" data-v="9:16">스토리 9:16</button>
+            <button type="button" data-v="16:9">16:9</button>
+            <button type="button" data-v="3:1">헤더 3:1</button>
+            <button type="button" data-v="fit">글 길이에 맞추기</button>
+          </div>
+        </div>
+        <div class="fld"><span class="lbl">COLUMNS</span>
+          <div class="seg sm" data-seg="columns">
+            <button type="button" data-v="1">1단</button><button type="button" data-v="2">2단 소설형</button>
+          </div>
+        </div>
+        <label class="switch"><input type="checkbox" data-k="pageNum"><span></span>페이지 번호 표시 (1/3)</label>
+        <label class="fld range"><span class="lbl">PADDING <output data-out="padding"></output></span><input type="range" min="12" max="90" step="1" data-k="padding"></label>
+        <div class="fld"><span class="lbl">TEXT COLOR</span>
+          <div class="row">
+            <div class="seg sm" data-seg="inkMode">
+              <button type="button" data-v="black">블랙</button><button type="button" data-v="white">화이트</button><button type="button" data-v="custom">직접</button>
+            </div>
+            <input type="color" data-k="inkCustom" class="swatch-in">
+          </div>
+        </div>
+        <div class="fld"><span class="lbl">FRAME</span>
+          <div class="seg sm wrap" data-seg="frame">
+            <button type="button" data-v="border">기본 테두리</button>
+            <button type="button" data-v="emoji">사방 이모티콘</button>
+            <button type="button" data-v="livery">리버리 줄무늬</button>
+            <button type="button" data-v="checker">체커 띠</button>
+            <button type="button" data-v="none">없음</button>
+          </div>
+        </div>
+        <div class="row frame-opts">
+          <label class="fld mini" data-show="frame=emoji"><span class="lbl">EMOJI</span><input type="text" data-k="frameEmoji" maxlength="8"></label>
+          <label class="fld mini" data-show="frame=border,livery,checker"><span class="lbl">FRAME COLOR</span><input type="color" data-k="frameColor" class="swatch-in"></label>
+          <label class="fld mini" data-show="frame=livery,checker"><span class="lbl">ACCENT</span><input type="color" data-k="frameColor2" class="swatch-in"></label>
+        </div>
+      </div>
+    </details>
+
+    <!-- SECTOR 07 -->
+    <details class="sector">
+      <summary><span class="sec-no">SECTOR 07</span><span class="sec-name">BACKGROUND</span><span class="sec-ko">카드 배경</span></summary>
+      <div class="sec-body">
+        <div class="seg sm wrap" data-seg="bgType">
+          <button type="button" data-v="solid">단색</button><button type="button" data-v="gradient">그라데이션</button><button type="button" data-v="pattern">패턴</button><button type="button" data-v="image">이미지</button><button type="button" data-v="html">HTML</button>
+        </div>
+        <div class="bg-pane" data-show="bgType=solid,gradient,pattern">
+          <div class="row">
+            <label class="fld mini"><span class="lbl">COLOR</span><input type="color" data-k="bg1" class="swatch-in"></label>
+            <label class="fld mini" data-show="bgType=gradient,pattern"><span class="lbl">COLOR 2</span><input type="color" data-k="bg2" class="swatch-in"></label>
+            <label class="fld mini grow" data-show="bgType=gradient"><span class="lbl">ANGLE <output data-out="bgAngle"></output></span><input type="range" min="0" max="360" step="5" data-k="bgAngle"></label>
+          </div>
+          <div class="fld" data-show="bgType=pattern"><span class="lbl">PATTERN</span>
+            <div class="seg sm wrap" data-seg="bgPattern">
+              <button type="button" data-v="dots">도트</button><button type="button" data-v="grid">그리드</button><button type="button" data-v="stripes">줄무늬</button><button type="button" data-v="checker">체커</button><button type="button" data-v="carbon">카본</button>
+            </div>
+          </div>
+          <label class="fld range" data-show="bgType=pattern"><span class="lbl">PATTERN SIZE <output data-out="bgPatternSize"></output></span><input type="range" min="6" max="60" step="1" data-k="bgPatternSize"></label>
+        </div>
+        <div class="bg-pane" data-show="bgType=image">
+          <div class="row">
+            <label class="btn file sm">이미지 고르기<input type="file" id="bgImageInput" accept="image/*" hidden></label>
+            <button type="button" class="btn sm ghost" id="bgImageClear">지우기</button>
+          </div>
+          <label class="fld range"><span class="lbl">DIM <output data-out="bgDim"></output></span><input type="range" min="0" max="0.85" step="0.05" data-k="bgDim"></label>
+          <label class="fld range"><span class="lbl">BLUR <output data-out="bgBlur"></output></span><input type="range" min="0" max="20" step="1" data-k="bgBlur"></label>
+        </div>
+        <div class="bg-pane" data-show="bgType=html">
+          <label class="fld"><span class="lbl">HTML</span><textarea data-k="bgHtml" rows="5" spellcheck="false" placeholder='&lt;div style="position:absolute;inset:0;background:linear-gradient(#1b2550,#8d84e8)"&gt;&lt;/div&gt;'></textarea></label>
+          <p class="hint">인라인 style만 적용됩니다. script·style 태그는 지워집니다.</p>
+        </div>
+      </div>
+    </details>
+
+    <!-- SECTOR 08 -->
+    <details class="sector">
+      <summary><span class="sec-no">SECTOR 08</span><span class="sec-name">STICKERS</span><span class="sec-ko">스티커</span></summary>
+      <div class="sec-body">
+        <div class="row">
+          <label class="btn file sm">스티커 올리기<input type="file" id="stickerInput" accept="image/*" multiple hidden></label>
+          <label class="fld mini inline"><span class="lbl">붙일 장</span><select id="stickerPage"></select></label>
+        </div>
+        <p class="hint">스티커를 누르면 고른 장 가운데에 붙습니다. 미리보기에서 끌어 옮기고, 오른쪽 아래 손잡이로 크기 조절, × 로 삭제.</p>
+        <div class="thumbs" id="stickerList"></div>
+      </div>
+    </details>
+
+    <!-- SECTOR 09 -->
+    <details class="sector">
+      <summary><span class="sec-no">SECTOR 09</span><span class="sec-name">PRESETS</span><span class="sec-ko">프리셋 보관함</span></summary>
+      <div class="sec-body">
+        <div class="row">
+          <input type="text" id="presetName" placeholder="프리셋 이름" class="grow">
+          <button type="button" class="btn sm" id="presetSave">현재 설정 저장</button>
+        </div>
+        <ul class="presets" id="presetList"></ul>
+        <div class="row">
+          <button type="button" class="btn sm ghost" id="presetExport">JSON 내보내기</button>
+          <label class="btn sm ghost file">JSON 가져오기<input type="file" id="presetImport" accept="application/json,.json" hidden></label>
+          <button type="button" class="btn sm ghost danger" id="resetAll">설정 초기화</button>
+        </div>
+        <p class="hint">프리셋은 이 브라우저에만 저장됩니다. 본문·사진·스티커는 프리셋에 들어가지 않아요.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PREVIEW ============ -->
+  <section class="preview" aria-label="미리보기">
+    <div class="pv-head">
+      <div class="pv-title"><span class="lbl">PREVIEW</span><strong id="pageCount">1장</strong></div>
+      <div class="pv-tools">
+        <label class="zoom"><span class="lbl">ZOOM</span><input type="range" id="zoom" min="25" max="100" step="5" value="55"></label>
+        <button type="button" class="btn" id="saveAll">전체 ZIP 저장</button>
+      </div>
+    </div>
+    <div class="pv-grid" id="preview"></div>
+  </section>
+</main>
+
+<div id="measure" aria-hidden="true"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<footer class="foot">
+  <div class="livery" aria-hidden="true"></div>
+  <div class="foot-in">
+    <span class="foot-brand">PADDOCK CLIPPER</span>
+    <span>모토원(Motivo 1) 팬 메이드 발췌 도구 · 모든 작업은 브라우저 안에서만 처리되고 서버로 전송되지 않습니다.</span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/modern-screenshot@4.6.8/dist/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
