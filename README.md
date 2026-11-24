@@ -1,4 +1,4 @@
-# PADDOCK CLIPPER
+# TEXT EXTRACTOR
 
 모토원(Motivo 1) 테마 발췌기. 본문을 넣으면 이미지 카드로 만들어 주고, 카드 비율을 고정하면 넘치는 글은 다음 장으로 자동으로 이어집니다.
 

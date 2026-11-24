@@ -1,5 +1,5 @@
 /* =========================================================
-   PADDOCK CLIPPER — app.js
+   TEXT EXTRACTOR — app.js
    본문 → 블록 파싱 → 칸(slot) 단위 자동 페이지 넘김 → 카드 렌더 → PNG/ZIP 저장
    ========================================================= */
 (() => {
@@ -72,7 +72,7 @@ const DEFAULTS = {
   profiles: [0, 1, 2, 3, 4, 5].map(defProfile),
 };
 
-const SAMPLE = `# 패독 클리퍼
+const SAMPLE = `# TEXT EXTRACTOR
 ## 모토원 발췌기
 
 본문을 붙여 넣으면 카드 이미지로 만들어 줍니다. 카드 비율을 고정하면 넘치는 글은 **자동으로 다음 장**에 이어져요.
@@ -855,8 +855,8 @@ async function cardBlob(i) {
   });
 }
 function fileBase() {
-  const t = (S.title || 'paddock-clipper').replace(/[\\/:*?"<>|\s]+/g, '_').replace(/[*_~=|{}#]+$/g, '').slice(0, 40);
-  return t || 'paddock-clipper';
+  const t = (S.title || 'text-extractor').replace(/[\\/:*?"<>|\s]+/g, '_').replace(/[*_~=|{}#]+$/g, '').slice(0, 40);
+  return t || 'text-extractor';
 }
 function download(blob, name) {
   const a = document.createElement('a');
@@ -1107,8 +1107,8 @@ function bindControls() {
     if (b.dataset.act === 'del') { if (!confirm(`"${p.name}" 프리셋을 지울까요?`)) return; list.splice(i, 1); lsSet(LS_PRESETS, list); renderPresets(); }
   });
   $('#presetExport').addEventListener('click', () => {
-    const data = { app: 'paddock-clipper', version: 1, current: S, presets: lsGet(LS_PRESETS) || [] };
-    download(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }), 'paddock-clipper-presets.json');
+    const data = { app: 'text-extractor', version: 1, current: S, presets: lsGet(LS_PRESETS) || [] };
+    download(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }), 'text-extractor-presets.json');
   });
   $('#presetImport').addEventListener('change', async e => {
     const f = e.target.files[0]; e.target.value = '';
