@@ -148,10 +148,6 @@ input[type=color].swatch-in{width:44px;height:34px;padding:2px;border:1.5px soli
 .prof-side{font-size:11px;font-weight:900;color:var(--gray);letter-spacing:.08em}
 .prof-body{padding:10px 12px 14px;border-top:1px dashed var(--line);display:flex;flex-direction:column;gap:10px}
 .prof-body .row>.fld{flex:1 1 110px}
-.palette{display:flex;flex-direction:column;gap:6px}
-.pal-row{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
-.pal-row>span{font-size:9.5px;font-weight:900;letter-spacing:.1em;color:var(--gray);width:58px}
-.chip{border:0;border-radius:6px;padding:4px 7px;font-size:10px;font-weight:900;letter-spacing:.06em;cursor:pointer;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
 
 /* presets */
 .presets{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
@@ -272,7 +268,7 @@ input[type=color].swatch-in{width:44px;height:34px;padding:2px;border:1.5px soli
 
 /* inline */
 .card b,.card strong{font-weight:800}
-.card mark{background:linear-gradient(transparent 45%,var(--hl,#fff176) 45%);color:inherit;padding:0 .05em}
+.card mark{background:var(--hl,#fff176);color:#16182a;padding:0 .12em;border-radius:.15em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .card .cen{background:#0b0b0b;color:transparent!important;border-radius:2px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .card .cen *{color:transparent!important;background:none!important}
 
@@ -288,23 +284,33 @@ input[type=color].swatch-in{width:44px;height:34px;padding:2px;border:1.5px soli
 .msg .ph{line-height:0}
 .msg .sp:empty{display:none}
 
-/* 1. MESSENGER */
-.t-messenger .msg .main{display:flex;flex-direction:column;gap:.25em;min-width:0;max-width:78%}
-.t-messenger .msg .hd .tm{display:none}
-.t-messenger .msg .line{display:flex;align-items:flex-end;gap:.35em}
-.t-messenger .msg .bx{background:var(--pc);color:var(--pt);padding:.5em .85em;border-radius:1.05em;border-top-left-radius:.3em}
-.t-messenger .msg .bx.phbx{padding:.3em}
-.t-messenger .msg .tr{opacity:.75;margin-top:.15em}
+/* 1. MESSENGER — 카톡 스타일 */
+.t-messenger .msg{gap:.5em;margin-bottom:.55em}
+.t-messenger .msg .av{width:2.5em;height:2.5em;border-radius:38%;background-color:#c9d3de}
+.t-messenger .msg .main{display:flex;flex-direction:column;gap:.3em;min-width:0;max-width:76%}
+.t-messenger .msg .hd{font-size:.8em;opacity:.85}
+.t-messenger .msg .hd .nm{font-weight:500}
+.t-messenger .msg .hd .tg,.t-messenger .msg .hd .tm{display:none}
+.t-messenger .msg .line{display:flex;align-items:flex-end;gap:.3em}
+.t-messenger .msg .bx{position:relative;background:var(--pc);color:var(--pt);padding:.45em .7em;border-radius:.6em;line-height:1.45;box-shadow:0 0 0 1px rgba(0,0,0,.06)}
+.t-messenger .msg:not(.grp):not(.cont) .bx::before{content:"";position:absolute;top:.35em;left:-.38em;border-top:.42em solid transparent;border-bottom:.42em solid transparent;border-right:.5em solid var(--pc);transform:skewY(-28deg)}
+.t-messenger .msg .bx.phbx{padding:0;overflow:hidden;background:none;box-shadow:none}
+.t-messenger .msg .bx.phbx::before{display:none}
+.t-messenger .msg .ph img{border-radius:.6em}
+.t-messenger .msg .tr{opacity:.7;margin-top:.15em;font-size:.82em}
+.t-messenger .msg .line .tm{font-size:.62em;opacity:.6;margin-bottom:.1em}
 .t-messenger .msg.R{flex-direction:row-reverse}
-.t-messenger .msg.R .av{display:none}
+.t-messenger .msg.R .av,.t-messenger .msg.R .hd{display:none}
 .t-messenger .msg.R .main{align-items:flex-end}
 .t-messenger .msg.R .line{flex-direction:row-reverse}
-.t-messenger .msg.R .bx{border-top-left-radius:1.05em;border-top-right-radius:.3em}
-.t-messenger .msg.R .hd{display:none}
+.t-messenger .msg.R:not(.grp):not(.cont) .bx::before{left:auto;right:-.38em;border-right:0;border-left:.5em solid var(--pc);transform:skewY(28deg)}
 .t-messenger .msg.grp .hd,.t-messenger .msg.cont .hd{display:none}
 .t-messenger .msg.grp .av,.t-messenger .msg.cont .av{visibility:hidden;height:0}
-.t-messenger .msg.grp{margin-top:calc(var(--c-msg) * -.55)}
-.t-messenger .msg .lt{display:flex;flex-direction:column;align-items:flex-end}
+.t-messenger .msg.grp{margin-top:-.25em}
+.t-messenger .blk.sys span{background:rgba(0,0,0,.12);font-size:.92em}
+.t-messenger .blk.date{justify-content:center;opacity:1}
+.t-messenger .blk.date::before,.t-messenger .blk.date::after{display:none}
+.t-messenger .blk.date span{background:rgba(0,0,0,.12);border-radius:99px;padding:.3em 1em}
 
 /* 2. TIMELINE */
 .t-timeline .msg{padding-bottom:var(--c-msg);border-bottom:1px solid color-mix(in srgb,currentColor 14%,transparent)}
@@ -318,24 +324,34 @@ input[type=color].swatch-in{width:44px;height:34px;padding:2px;border:1.5px soli
 .t-timeline .msg.cont .av{visibility:hidden;height:0}
 .t-timeline .msg.cont .hd{display:none}
 
-/* 3. TERMINAL */
-.t-terminal .msg{font-family:"Nanum Gothic Coding",ui-monospace,Menlo,Consolas,monospace;gap:0;margin-bottom:calc(var(--c-msg) * .5);letter-spacing:0}
-.t-terminal .msg .av{display:none}
-.t-terminal .msg .main{flex:1;min-width:0}
-.t-terminal .msg .hd{display:inline;}
-.t-terminal .msg .hd .tm{opacity:.5;margin-right:.5em}
-.t-terminal .msg .hd .tm::before{content:"["}.t-terminal .msg .hd .tm::after{content:"]"}
-.t-terminal .msg .nm{color:var(--pcx);font-weight:700}
-.t-terminal .msg .nm::after{content:" >";opacity:.55;font-weight:400}
-.t-terminal .msg .tg{display:none}
-.t-terminal .msg .hd{display:block}
-.t-terminal .msg .line .tm{display:none}
-.t-terminal .msg .bx{padding-left:1.2em;border-left:2px solid color-mix(in srgb,var(--pcx) 60%,transparent);margin-top:.1em}
-.t-terminal .msg .tr{opacity:.6}
-.t-terminal .msg .tr::before{content:"// "}
-.t-terminal .msg.cont .hd{display:none}
-.t-terminal .blk.sys span{background:none;font-family:"Nanum Gothic Coding",monospace}
-.t-terminal .blk.sys span::before{content:"*** "}.t-terminal .blk.sys span::after{content:" ***"}
+/* 3. TERMINAL — 아이폰 메시지 스타일 */
+.t-terminal .msg{gap:0;margin-bottom:.22em;font-family:-apple-system,"SF Pro Text","Apple SD Gothic Neo",var(--c-font)}
+.t-terminal .msg .av{width:1.9em;height:1.9em;margin-right:.45em;align-self:flex-end}
+.t-terminal .msg .main{display:flex;flex-direction:column;align-items:flex-start;min-width:0;max-width:72%}
+.t-terminal .msg .hd{font-size:.7em;opacity:.55;padding-left:.9em;margin-bottom:.2em}
+.t-terminal .msg .hd .nm{font-weight:500}
+.t-terminal .msg .hd .tg,.t-terminal .msg .hd .tm{display:none}
+.t-terminal .msg .line{display:flex;flex-direction:column;align-items:flex-start}
+.t-terminal .msg .bx{position:relative;background:var(--pc);color:var(--pt);padding:.4em .8em .45em;border-radius:1.15em;line-height:1.4}
+.t-terminal .msg:not(.last) .bx::after{display:none}
+.t-terminal .msg .bx::after{content:"";position:absolute;bottom:0;left:-.32em;width:.9em;height:1em;background:var(--pc);border-bottom-right-radius:.8em .55em;clip-path:inset(0 30% 0 0)}
+.t-terminal .msg .bx.phbx{padding:0;background:none;overflow:hidden}
+.t-terminal .msg .bx.phbx::after{display:none}
+.t-terminal .msg .ph img{border-radius:1em}
+.t-terminal .msg .tr{opacity:.72;font-size:.8em;margin-top:.1em}
+.t-terminal .msg .line .tm{font-size:.6em;opacity:.5;margin:.25em .9em 0}
+.t-terminal .msg.R{flex-direction:row-reverse}
+.t-terminal .msg.R .av,.t-terminal .msg.R .hd{display:none}
+.t-terminal .msg.R .main,.t-terminal .msg.R .line{align-items:flex-end}
+.t-terminal .msg.R .bx::after{left:auto;right:-.32em;border-bottom-right-radius:0;border-bottom-left-radius:.8em .55em;clip-path:inset(0 0 0 30%)}
+.t-terminal .msg.grp .hd,.t-terminal .msg.cont .hd{display:none}
+.t-terminal .msg:not(.last) .av{visibility:hidden}
+.t-terminal .msg.last .av{visibility:visible}
+.t-terminal .msg:not(.grp){margin-top:.45em}
+.t-terminal .blk.sys{font-size:.7em;opacity:.55}
+.t-terminal .blk.sys span{background:none;padding:0}
+.t-terminal .blk.date{justify-content:center;font-size:.7em;opacity:.55;font-weight:600}
+.t-terminal .blk.date::before,.t-terminal .blk.date::after{display:none}
 
 /* 4. GAME (visual novel) */
 .t-game .msg{flex-direction:column;gap:0;align-items:stretch;margin-bottom:calc(var(--c-msg) * 1.4)}
@@ -388,26 +404,25 @@ input[type=color].swatch-in{width:44px;height:34px;padding:2px;border:1.5px soli
 .t-radio .msg.R{box-shadow:inset -3px 0 0 var(--pcx2)}
 .t-radio .blk.sys span{background:#0e1020;color:#aab0d8;font-family:"Oswald",sans-serif;letter-spacing:.08em;text-transform:uppercase;border-radius:3px}
 
-/* 7. PADDOCK PASS */
-.t-pass .msg{display:block;width:84%;background:#fff;color:#111421;border-radius:.6em;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.14),0 .25em .6em rgba(10,12,30,.12);position:relative}
+/* 7. PADDOCK PASS — 슬림 */
+.t-pass .msg{display:block;width:fit-content;min-width:52%;max-width:80%;background:#fff;color:#111421;border-radius:.45em;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.13),0 .15em .4em rgba(10,12,30,.1);margin-bottom:.6em}
 .t-pass .msg.R{margin-left:auto}
 .t-pass .msg .av{display:none}
-.t-pass .msg .strip{position:relative;height:2.2em;background:var(--pc);color:var(--pt);display:flex;align-items:center;justify-content:space-between;padding:0 .9em;font-family:"Oswald",sans-serif;font-size:.62em;letter-spacing:.2em;font-weight:700}
-.t-pass .msg .hole{position:absolute;left:50%;top:.55em;width:3.6em;height:1em;transform:translateX(-50%);border-radius:1em;background:#fff;box-shadow:inset 0 1px 2px rgba(0,0,0,.35)}
-.t-pass .msg .main{padding:.65em .95em .4em;display:flex;flex-direction:column}
-.t-pass .msg .hd{display:flex;align-items:center;gap:.6em}
-.t-pass .msg .pav{width:2.6em;height:2.6em;border-radius:.3em;flex:none;background:color-mix(in srgb,var(--pc) 35%,#eee) center/cover;border:1.5px solid #111421;transform:scaleX(calc(1 / var(--c-sx)))}
-.t-pass .msg .who{display:flex;flex-direction:column;line-height:1.1;min-width:0}
-.t-pass .msg .nm{text-transform:uppercase;font-weight:900;font-size:1.12em;letter-spacing:-.01em}
-.t-pass .msg .tg{opacity:.6;font-size:.66em;letter-spacing:.12em;text-transform:uppercase;margin-top:.2em}
-.t-pass .msg .hd .tm{margin-left:auto;align-self:flex-start;font-size:.6em;font-weight:800;letter-spacing:.1em;opacity:.55}
-.t-pass .msg .line{padding:.55em 0 .2em;border-top:1px dashed rgba(0,0,0,.2);margin-top:.55em}
+.t-pass .msg .strip{position:relative;height:1.55em;background:var(--pc);color:var(--pt);display:flex;align-items:center;justify-content:space-between;gap:3.5em;padding:0 .75em;font-family:"Oswald",sans-serif;font-size:.52em;letter-spacing:.18em;font-weight:700}
+.t-pass .msg .hole{position:absolute;left:50%;top:50%;width:2.8em;height:.75em;transform:translate(-50%,-50%);border-radius:1em;background:#fff;box-shadow:inset 0 1px 2px rgba(0,0,0,.35)}
+.t-pass .msg .main{padding:.45em .75em .15em;display:flex;flex-direction:column}
+.t-pass .msg .hd{display:flex;align-items:center;gap:.45em;line-height:1.1}
+.t-pass .msg .pav{width:1.7em;height:1.7em;border-radius:.22em;flex:none;background:color-mix(in srgb,var(--pc) 35%,#eee) center/cover;border:1px solid #111421;transform:scaleX(calc(1 / var(--c-sx)))}
+.t-pass .msg .who{display:flex;align-items:baseline;gap:.45em;min-width:0}
+.t-pass .msg .nm{text-transform:uppercase;font-weight:900;font-size:.92em;letter-spacing:-.01em}
+.t-pass .msg .tg{opacity:.55;font-size:.6em;letter-spacing:.1em;text-transform:uppercase}
+.t-pass .msg .hd .tm{margin-left:auto;padding-left:.8em;font-size:.58em;font-weight:800;letter-spacing:.08em;opacity:.5}
+.t-pass .msg .line{padding:.3em 0 .1em}
 .t-pass .msg .line .tm{display:none}
-.t-pass .msg .tr{opacity:.62}
-.t-pass .msg .bar{display:flex;align-items:center;justify-content:space-between;gap:.6em;padding:.3em .95em .6em;font-size:.55em;font-weight:800;letter-spacing:.16em;opacity:.65}
-.t-pass .msg .code{height:2em;flex:0 0 46%;background:repeating-linear-gradient(90deg,#111 0 2px,transparent 2px 3px,#111 3px 4px,transparent 4px 7px,#111 7px 10px,transparent 10px 11px,#111 11px 12px,transparent 12px 15px)}
+.t-pass .msg .tr{opacity:.6;font-size:.8em}
+.t-pass .msg .bar{display:flex;align-items:center;justify-content:space-between;gap:.6em;padding:.1em .75em .45em;font-size:.48em;font-weight:800;letter-spacing:.14em;opacity:.55}
+.t-pass .msg .code{height:1.5em;flex:0 0 40%;background:repeating-linear-gradient(90deg,#111 0 2px,transparent 2px 3px,#111 3px 4px,transparent 4px 7px,#111 7px 10px,transparent 10px 11px,#111 11px 12px,transparent 12px 15px)}
 .t-pass .msg.cont .strip .lbl2,.t-pass .msg.cont .hd{display:none}
-.t-pass .msg.cont .line{border-top:0;margin-top:0}
 
 /* 8. LIVE caption */
 .t-live .msg{flex-direction:column;gap:0;align-items:stretch;margin-bottom:calc(var(--c-msg) * 1.1)}
@@ -427,20 +442,6 @@ input[type=color].swatch-in{width:44px;height:34px;padding:2px;border:1.5px soli
 .t-live .msg.cont .hd{display:none}
 .t-live .msg.R .hd{align-self:flex-end}
 .t-live .msg.R .bx{border-left:0;border-right:4px solid var(--pcx2);text-align:right}
-
-/* 9. PIT BOARD */
-.t-pit .msg{flex-direction:column;gap:0;align-items:flex-start;margin-bottom:calc(var(--c-msg) * 1.2)}
-.t-pit .msg.R{align-items:flex-end}
-.t-pit .msg .av{display:none}
-.t-pit .msg .main{display:flex;flex-direction:column;align-items:inherit;max-width:100%}
-.t-pit .msg .hd{background:var(--pc);color:var(--pt);font-family:"Oswald",sans-serif;text-transform:uppercase;font-size:.66em;letter-spacing:.14em;font-weight:700;padding:.3em .7em;border-radius:.3em .3em 0 0;margin-left:.7em;margin-right:.7em;gap:.6em}
-.t-pit .msg .hd .tm{opacity:.75}
-.t-pit .msg .line{display:block}
-.t-pit .msg .line .tm{display:none}
-.t-pit .msg .bx{background:#101114;color:#fdfdfd;border:.32em solid #3a3c44;border-radius:.35em;padding:.4em .75em .5em;font-family:"Oswald","Black Han Sans","Pretendard Variable",sans-serif;font-weight:700;font-size:1.45em;line-height:1.15;text-transform:uppercase;letter-spacing:.01em;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
-.t-pit .msg .tr{font-family:"Pretendard Variable",sans-serif;font-size:.5em;text-transform:none;color:#ffd60a;opacity:1;font-weight:700;letter-spacing:0;margin-top:.35em}
-.t-pit .msg.cont .hd{display:none}
-.t-pit .blk.sys span{background:#101114;color:#ffd60a;font-family:"Oswald",sans-serif;text-transform:uppercase;letter-spacing:.1em;border-radius:3px}
 
 /* sticker */
 .stk{position:absolute;touch-action:none;cursor:grab;user-select:none}

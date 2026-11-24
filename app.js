@@ -11,28 +11,15 @@ const clone = o => JSON.parse(JSON.stringify(o));
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 /* ---------- 데이터 ---------- */
-// 모토원 팀 컬러 팔레트 (말풍선색 프리셋). 색을 바꾸려면 여기만 고치면 됩니다.
-const TEAMS = {
-  FACTORY: [
-    ['RAVEN', '#1f1d2e'], ['ZENITH', '#f0c419'], ['SEIKA', '#d72638'],
-    ['ARDOR', '#ff6a13'], ['NOVARA', '#14a37f'], ['ATLAS', '#1d4ed8'],
-  ],
-  SATELLITE: [
-    ['ORIGIN', '#8b7fe0'], ['LIBERTY', '#00a3c4'], ['VECTOR', '#b8e300'],
-    ['TITAN', '#5f6675'], ['FALCON', '#ec5f9c'],
-  ],
-};
-
 const THEMES = [
-  { id: 'messenger', name: '메신저', en: 'BASIC' },
+  { id: 'messenger', name: '메신저', en: 'KAKAO STYLE' },
   { id: 'timeline', name: '타임라인', en: 'BASIC' },
-  { id: 'terminal', name: '단말기', en: 'BASIC' },
+  { id: 'terminal', name: '단말기', en: 'iMESSAGE STYLE' },
   { id: 'game', name: '게임 대화창', en: 'BASIC' },
   { id: 'script', name: '대본', en: 'BASIC' },
   { id: 'radio', name: 'TEAM RADIO', en: 'MOTIVO 1', m1: true },
   { id: 'pass', name: 'PADDOCK PASS', en: 'MOTIVO 1', m1: true },
   { id: 'live', name: 'LIVE 중계 자막', en: 'MOTIVO 1', m1: true },
-  { id: 'pit', name: 'PIT BOARD', en: 'MOTIVO 1', m1: true },
 ];
 
 const FONTS = [
@@ -56,10 +43,21 @@ const RATIOS = {
 
 const INK = { black: '#121420', white: '#ffffff' };
 
-const defProfile = i => ({
-  name: '', tag: '', side: i === 1 ? 'R' : 'L', avatar: '',
-  color: i === 1 ? '#26316b' : '#eeedf6', text: i === 1 ? '#ffffff' : '#14162a',
-});
+// color/text 가 '' 이면 테마 기본색을 씀
+const defProfile = i => ({ name: '', tag: '', side: i === 1 ? 'R' : 'L', avatar: '', color: '', text: '' });
+
+// 테마별 기본 말풍선색 [배경, 글자]
+const THEME_COLORS = {
+  messenger: { L: ['#ffffff', '#191919'], R: ['#fee500', '#191919'] },
+  terminal: { L: ['#e9e9eb', '#000000'], R: ['#0b84fe', '#ffffff'] },
+  _: { L: ['#eeedf6', '#14162a'], R: ['#26316b', '#ffffff'] },
+};
+function effColors(p) {
+  const d = (THEME_COLORS[S.theme] || THEME_COLORS._)[p.side === 'R' ? 'R' : 'L'];
+  const pc = p.color || d[0];
+  const pt = p.text || (p.color ? autoText(p.color) : d[1]);
+  return [pc, pt];
+}
 
 const DEFAULTS = {
   mode: 'normal', theme: 'messenger', photoOn: true,
@@ -120,9 +118,11 @@ function mergeSettings(src) {
       const o = { ...d };
       for (const k of Object.keys(d)) if (typeof p[k] === 'string') o[k] = p[k];
       if (o.side !== 'L' && o.side !== 'R') o.side = d.side;
+      if ((o.color === '#eeedf6' && o.text === '#14162a') || (o.color === '#26316b' && o.text === '#ffffff')) { o.color = ''; o.text = ''; }
       return o;
     });
   }
+  if (!THEMES.some(t => t.id === out.theme)) out.theme = DEFAULTS.theme;
   return out;
 }
 
@@ -276,6 +276,12 @@ function parse(text) {
     out.push({ type: 'p', html: inline(line.replace(/^\s+/, '')), tr: '' });
     lastSpeaker = null;
   }
+  // 같은 사람 연속 말풍선의 마지막 표시 (아이폰 메시지 꼬리)
+  out.forEach((d, i) => {
+    if (d.type !== 'msg') return;
+    const n = out[i + 1];
+    d.last = !(n && n.type === 'msg' && n.p === d.p && n.grp);
+  });
   // 앞뒤 빈 줄 정리
   while (out.length && out[0].type === 'gap') out.shift();
   while (out.length && out[out.length - 1].type === 'gap') out.pop();
@@ -313,13 +319,13 @@ function inkIsLight() { return lum(inkColor()) > 0.5; }
 function buildMsg(d) {
   const p = profileOf(d.p);
   const theme = S.theme;
-  const pc = p.color, pt = p.text;
+  const [pc, pt] = effColors(p);
   let pcx = pc;
   if (!inkIsLight() && lum(pc) > 0.6) pcx = mix(pc, '#000000', 0.55);
   if (inkIsLight() && lum(pc) < 0.12) pcx = mix(pc, '#ffffff', 0.55);
   const pcx2 = lum(pc) < 0.12 ? mix(pc, '#ffffff', 0.6) : pc;
 
-  const m = el('div', `blk msg ${p.side}` + (d.grp ? ' grp' : '') + (d.img != null ? ' phmsg' : ''));
+  const m = el('div', `blk msg ${p.side}` + (d.grp ? ' grp' : '') + (d.last ? ' last' : '') + (d.img != null ? ' phmsg' : ''));
   m.style.cssText = `--pc:${pc};--pt:${pt};--pcx:${pcx};--pcx2:${pcx2}`;
   m.dataset.split = d.img == null ? '1' : '';
   const av = el('div', 'av');
@@ -1171,12 +1177,10 @@ function renderPresets() {
 let openProfiles = new Set([0]);
 function buildProfiles() {
   const wrap = $('#profiles');
-  const chips = Object.entries(TEAMS).map(([grp, list]) =>
-    `<div class="pal-row"><span>${grp}</span>${list.map(([n, c]) => `<button type="button" class="chip" data-c="${c}" style="background:${c};color:${autoText(c)}">${n}</button>`).join('')}</div>`).join('');
-  wrap.innerHTML = S.profiles.map((p, i) => `
+  wrap.innerHTML = S.profiles.map((p, i) => { const [pc, pt] = effColors(p); return `
     <details class="prof" data-i="${i}"${openProfiles.has(i) ? ' open' : ''}>
       <summary>
-        <span class="prof-no" style="background:${p.color};color:${p.text}">${i + 1}</span>
+        <span class="prof-no" style="background:${pc};color:${pt}">${i + 1}</span>
         <span class="prof-av" style="${p.avatar ? `background-image:url('${p.avatar}')` : ''}"></span>
         <span class="prof-name">${p.name ? esc(p.name) : `<em>프로필 ${i + 1} · 비어 있음</em>`}</span>
         <span class="prof-side">${p.side === 'L' ? 'LEFT' : 'RIGHT'}</span>
@@ -1192,18 +1196,20 @@ function buildProfiles() {
           ${p.avatar ? '<button type="button" class="btn sm ghost" data-avclear>사진 빼기</button>' : ''}
         </div>
         <div class="row">
-          <label class="fld mini"><span class="lbl">BUBBLE</span><input type="color" class="swatch-in" data-p="color" value="${p.color}"></label>
-          <label class="fld mini"><span class="lbl">TEXT</span><input type="color" class="swatch-in" data-p="text" value="${p.text}"></label>
+          <label class="fld mini"><span class="lbl">BUBBLE ${p.color ? '' : '<output>자동</output>'}</span><input type="color" class="swatch-in" data-p="color" value="${pc}"></label>
+          <label class="fld mini"><span class="lbl">TEXT ${p.text || p.color ? '' : '<output>자동</output>'}</span><input type="color" class="swatch-in" data-p="text" value="${pt}"></label>
+          ${p.color || p.text ? '<button type="button" class="btn sm ghost" data-colorreset>테마 기본색으로</button>' : ''}
         </div>
-        <div class="palette"><span class="lbl">TEAM COLORS</span>${chips}</div>
+        <p class="hint">색을 고르지 않으면 채팅 테마의 기본색을 씁니다.</p>
       </div>
-    </details>`).join('');
+    </details>`; }).join('');
 }
 function bindProfiles() {
   const wrap = $('#profiles');
   const refreshSummary = (det, p, i) => {
     const s = det.querySelector('summary');
-    s.querySelector('.prof-no').style.cssText = `background:${p.color};color:${p.text}`;
+    const [pc, pt] = effColors(p);
+    s.querySelector('.prof-no').style.cssText = `background:${pc};color:${pt}`;
     s.querySelector('.prof-name').innerHTML = p.name ? esc(p.name) : `<em>프로필 ${i + 1} · 비어 있음</em>`;
     s.querySelector('.prof-side').textContent = p.side === 'L' ? 'LEFT' : 'RIGHT';
   };
@@ -1216,7 +1222,7 @@ function bindProfiles() {
     const i = +det.dataset.i, p = S.profiles[i];
     const k = e.target.dataset.p; if (!k) return;
     p[k] = e.target.value;
-    if (k === 'color') { p.text = autoText(p.color); det.querySelector('[data-p="text"]').value = p.text; }
+    if (k === 'color') { p.text = ''; det.querySelector('[data-p="text"]').value = effColors(p)[1]; }
     refreshSummary(det, p, i); changed(120);
   });
   wrap.addEventListener('click', e => {
@@ -1228,16 +1234,11 @@ function bindProfiles() {
       det.querySelectorAll('[data-side]').forEach(b => b.classList.toggle('on', b === side));
       refreshSummary(det, p, i); changed(0); return;
     }
-    const chip = e.target.closest('.chip');
-    if (chip) {
-      p.color = chip.dataset.c; p.text = autoText(p.color);
-      det.querySelector('[data-p="color"]').value = p.color;
-      det.querySelector('[data-p="text"]').value = p.text;
-      refreshSummary(det, p, i); changed(0); return;
-    }
+    if (e.target.closest('[data-colorreset]')) { p.color = ''; p.text = ''; buildProfiles(); changed(0); return; }
     if (e.target.closest('[data-avclear]')) { p.avatar = ''; buildProfiles(); changed(0); }
   });
   wrap.addEventListener('change', async e => {
+    if (e.target.matches('[data-p="color"],[data-p="text"]')) { buildProfiles(); return; }
     if (!e.target.matches('[data-av]')) return;
     const det = e.target.closest('.prof'); const i = +det.dataset.i;
     const f = e.target.files[0]; if (!f) return;
